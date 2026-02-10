@@ -1,0 +1,49 @@
+@import "tailwindcss";
+
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: dark;
+  color: #ffffff;
+  /* Explicit white fallback */
+  background-color: #000000;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  display: flex;
+  place-items: center;
+  min-width: 320px;
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+@layer utilities {
+  .text-neon-blue {
+    color: #00f3ff;
+    text-shadow: 0 0 10px #00f3ff, 0 0 20px #00f3ff;
+  }
+
+  .text-neon-pink {
+    color: #ff00ff;
+    text-shadow: 0 0 10px #ff00ff, 0 0 20px #ff00ff;
+  }
+
+  .border-neon-blue {
+    border-color: #00f3ff;
+    box-shadow: 0 0 10px #00f3ff, inset 0 0 10px #00f3ff;
+  }
+
+  .bg-neon-grid {
+    background-image: linear-gradient(rgba(0, 243, 255, 0.1) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 243, 255, 0.1) 1px, transparent 1px);
+    background-size: 50px 50px;
+  }
+}
