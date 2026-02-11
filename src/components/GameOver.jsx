@@ -1,5 +1,6 @@
 import { useGameStore } from '../store';
 import Leaderboard from './Leaderboard';
+import { QRCodeSVG } from 'qrcode.react';
 
 const GameOver = () => {
     const { score, stats, gameMode, resetGame, setGameStatus, setGameMode, toggleSound, soundEnabled } = useGameStore();
@@ -91,7 +92,32 @@ const GameOver = () => {
                         onMouseLeave={(e) => (e.target.style.borderColor = 'rgba(255,255,255,0.2)')}
                     >⌂ MAIN MENU</button>
                 </div>
-                <Leaderboard />
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 20, alignItems: 'center' }}>
+                    <Leaderboard />
+
+                    <div style={{
+                        display: 'flex', gap: 16, alignItems: 'center',
+                        padding: '12px 16px', background: 'rgba(255,255,255,0.05)',
+                        border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8
+                    }}>
+                        <div style={{ background: '#fff', padding: 4, borderRadius: 4 }}>
+                            <QRCodeSVG
+                                value={`${window.location.origin}/leaderboard`}
+                                size={64}
+                                fgColor="#000"
+                                bgColor="#fff"
+                            />
+                        </div>
+                        <div style={{ textAlign: 'left' }}>
+                            <div style={{ fontSize: 10, color: '#00f3ff', fontFamily: 'monospace', letterSpacing: 1, marginBottom: 2 }}>
+                                SCAN FOR
+                            </div>
+                            <div style={{ fontSize: 14, fontWeight: 700, color: '#fff', fontFamily: 'monospace' }}>
+                                LIVE SCORES
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     );

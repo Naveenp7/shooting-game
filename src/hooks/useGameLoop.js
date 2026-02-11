@@ -3,6 +3,7 @@ import { useGameStore } from '../store';
 import { checkCollision } from '../utils/collision';
 import { spawnTarget, updateTargets, TARGET_TYPES, POWERUP_TYPES, spawnWave } from '../utils/spawnTargets';
 import { playSound, setSoundEnabled } from '../utils/sound';
+import { saveScoreToFirebase } from '../utils/firebaseLeaderboard';
 
 /**
  * Main game loop with all features:
@@ -56,6 +57,9 @@ export const useGameLoop = (canvasRef, landmarksRef, gestureRef, isPlaying) => {
         targetsHit: 0,
         targetsMissed: 0,
         bestCombo: 0,
+        bonusHit: 0,
+        bombsHit: 0,
+        powerUpsCollected: 0,
         // Streak
         streakText: '',
         streakTimer: 0,
@@ -233,7 +237,9 @@ export const useGameLoop = (canvasRef, landmarksRef, gestureRef, isPlaying) => {
                                 // BOMB: lose points, red flash
                                 gs.score = Math.max(0, gs.score - 20);
                                 storeRef.current.setScore(gs.score);
+                                storeRef.current.setScore(gs.score);
                                 storeRef.current.incrementStat('bombsHit');
+                                gs.bombsHit++;
                                 playSound('bomb');
                                 gs.screenShake.intensity = 25;
                                 gs.combo = 0;
@@ -258,6 +264,7 @@ export const useGameLoop = (canvasRef, landmarksRef, gestureRef, isPlaying) => {
                                 const puType = hitTarget.powerUpType;
                                 playSound('powerup');
                                 storeRef.current.incrementStat('powerUpsCollected');
+                                gs.powerUpsCollected++;
 
                                 if (puType === POWERUP_TYPES.SLOW_MO) {
                                     gs.activePowerUps.slow_mo = 300; // ~5 seconds
@@ -302,6 +309,7 @@ export const useGameLoop = (canvasRef, landmarksRef, gestureRef, isPlaying) => {
                                 if (hitTarget.type === TARGET_TYPES.BONUS) {
                                     playSound('powerup');
                                     storeRef.current.incrementStat('bonusHit');
+                                    gs.bonusHit++;
                                 } else {
                                     playSound('hit');
                                     storeRef.current.incrementStat('targetsHit');
@@ -745,14 +753,28 @@ export const useGameLoop = (canvasRef, landmarksRef, gestureRef, isPlaying) => {
         };
 
         const finishGame = () => {
-            // Save final stats
-            storeRef.current.updateStats({
+            // Save final stats locally
+            const finalStats = {
                 shotsFired: gs.shotsFired,
                 targetsHit: gs.targetsHit,
                 targetsMissed: gs.targetsMissed,
                 bestCombo: gs.bestCombo,
-            });
+                bonusHit: gs.bonusHit,
+                bombsHit: gs.bombsHit,
+                powerUpsCollected: gs.powerUpsCollected
+            };
+
+            storeRef.current.updateStats(finalStats);
             storeRef.current.addHighScore(gs.score, storeRef.current.playerName);
+
+            // Save to Firebase Leaderboard
+            saveScoreToFirebase(
+                storeRef.current.playerName || 'AGENT',
+                gs.score,
+                finalStats,
+                storeRef.current.gameMode
+            );
+
             storeRef.current.setGameStatus('gameover');
             gs.initialized = false;
             running = false;
