@@ -38,6 +38,26 @@ const LiveLeaderboardPage = () => {
 
     const medalColors = ['#ffd700', '#c0c0c0', '#cd7f32']; // Gold, Silver, Bronze
 
+    // FORCE SCROLL & LAYOUT FIX
+    useEffect(() => {
+        // Save original styles
+        const originalOverflow = document.body.style.overflow;
+        const originalDisplay = document.body.style.display;
+        const originalPlaceItems = document.body.style.placeItems;
+
+        // Apply Leaderboard styles
+        document.body.style.overflow = 'auto';
+        document.body.style.display = 'block'; // Disable flex centering
+        document.body.style.placeItems = 'unset';
+
+        return () => {
+            // Revert
+            document.body.style.overflow = originalOverflow;
+            document.body.style.display = originalDisplay;
+            document.body.style.placeItems = originalPlaceItems;
+        };
+    }, []);
+
     return (
         <div className="leaderboard-page">
             <style>{`
@@ -53,7 +73,7 @@ const LiveLeaderboardPage = () => {
                     padding-bottom: 40px;
                 }
                 .lb-container {
-                    max-width: 1000px;
+                    max-width: 1600px;
                     margin: 0 auto;
                     padding: 20px;
                     display: grid;
@@ -62,7 +82,7 @@ const LiveLeaderboardPage = () => {
                 }
                 @media (min-width: 768px) {
                     .lb-container {
-                        grid-template-columns: 300px 1fr;
+                        grid-template-columns: 320px 1fr;
                         align-items: start;
                     }
                     .sidebar {
