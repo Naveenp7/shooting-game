@@ -44,6 +44,7 @@ const Leaderboard = ({ compact = false }) => {
             borderRadius: 8, padding: compact ? 16 : 24,
             boxShadow: '0 0 20px rgba(0,243,255,0.1)',
         }}>
+            {/* Header */}
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, marginBottom: compact ? 12 : 20 }}>
                 <span style={{ fontSize: 20 }}>🏆</span>
                 <h2 style={{ fontSize: compact ? 16 : 20, fontWeight: 700, color: '#fff', letterSpacing: 4, margin: 0 }}>
@@ -56,7 +57,14 @@ const Leaderboard = ({ compact = false }) => {
             </div>
 
             <style>{`@keyframes livePulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }`}</style>
+            <style>{`
+                .lb-scroll::-webkit-scrollbar { width: 4px; }
+                .lb-scroll::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); }
+                .lb-scroll::-webkit-scrollbar-thumb { background: #00f3ff; borderRadius: 2px; }
+                .lb-scroll::-webkit-scrollbar-thumb:hover { background: #fff; }
+            `}</style>
 
+            {/* Content */}
             {error ? (
                 <div style={{ textAlign: 'center', color: '#ff3333', padding: 20, fontSize: 13, fontFamily: 'monospace' }}>
                     ⚠️ {error}
@@ -75,10 +83,16 @@ const Leaderboard = ({ compact = false }) => {
                     No scores yet. Be the first!
                 </div>
             ) : (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 4, maxHeight: compact ? 280 : 400, overflowY: 'auto' }}>
+                <div className="lb-scroll" style={{
+                    display: 'flex', flexDirection: 'column', gap: 4,
+                    maxHeight: compact ? '200px' : '300px',
+                    overflowY: 'auto',
+                    overscrollBehavior: 'contain',
+                    paddingRight: 4
+                }}>
                     {scores.slice(0, compact ? 10 : 50).map((entry, index) => (
                         <div key={entry.id || index}>
-                            {/* Main Row */}
+                            {/* Row */}
                             <div
                                 onClick={() => toggleExpand(entry.id)}
                                 style={{
@@ -119,7 +133,7 @@ const Leaderboard = ({ compact = false }) => {
                                 </span>
                             </div>
 
-                            {/* Expanded Stats Row */}
+                            {/* Stats */}
                             {expandedId === entry.id && entry.stats && (
                                 <div style={{
                                     padding: '12px 16px', marginTop: 2, borderRadius: 4,
